@@ -31,7 +31,6 @@ const MIN_LAT = 35.65;
 const MAX_LAT = 35.7;
 const MIN_LNG = 139.7;
 const MAX_LNG = 139.8;
-const USER_NUMBERS = [];
 
 function getRandomNumber(minNumber, maxNumber) {
   const lower = Math.ceil(Math.min(Math.abs(minNumber), Math.abs(maxNumber)));
@@ -52,40 +51,40 @@ function getRandomArrayElement(elements) {
   return randomArrayElement;
 }
 
-for (let i = 1; i <= SIMILAR_AD_COUNT; i++) {
-  if (i < 10) {
-    USER_NUMBERS.push(`img/avatars/user0${i}.png`);
+function getShuffleArray(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
   }
-  else {
-    USER_NUMBERS.push(`img/avatars/user${i}.png`);
-  }
+  return array.slice(0, getRandomNumber(1, array.length));
 }
 
 function createAd() {
-  const coordinates = [getRandomDecimalNumber(MIN_LAT, MAX_LAT, 5), getRandomDecimalNumber(MIN_LNG, MAX_LNG, 5)];
+  const latCoordinate = getRandomDecimalNumber(MIN_LAT, MAX_LAT, 5);
+  const lngCoordinate = getRandomDecimalNumber(MIN_LNG, MAX_LNG, 5);
 
   return {
     author: {
-      avatar: getRandomArrayElement(USER_NUMBERS),
+      avatar: `img/avatars/user0${getRandomNumber(1, 8)}.png`,
     },
 
     offer: {
       title: 'Любой заголовок',
-      address: coordinates.join(', '),
-      price: getRandomNumber(0, 10500),
+      address: `${latCoordinate}, ${lngCoordinate}`,
+      price: getRandomNumber(1000, 10500),
       type: getRandomArrayElement(PROPERTY_TYPES),
       rooms: getRandomNumber(1, 10),
       guests: getRandomNumber(1, 20),
       checkin: getRandomArrayElement(TIMES),
       checkout: getRandomArrayElement(TIMES),
-      features: getRandomArrayElement(FEATURES),
+      features: getShuffleArray(FEATURES),
       description: 'Любое описание',
-      photos: getRandomArrayElement(PHOTOS),
+      photos: getShuffleArray(PHOTOS),
     },
 
     location: {
-      lat: coordinates[0],
-      lng: coordinates[1],
+      lat: latCoordinate,
+      lng: lngCoordinate,
     },
   };
 }
