@@ -1,3 +1,5 @@
+import { getShuffleArray, getRandomArrayElement, getRandomDecimalNumber, getRandomNumber } from './util.js';
+
 const PROPERTY_TYPES = [
   'palace',
   'flat',
@@ -32,4 +34,34 @@ const MAX_LAT = 35.7;
 const MIN_LNG = 139.7;
 const MAX_LNG = 139.8;
 
-export { PROPERTY_TYPES, TIMES, FEATURES, PHOTOS, SIMILAR_AD_COUNT, MIN_LAT, MAX_LAT, MIN_LNG, MAX_LNG };
+function createAd() {
+  const latCoordinate = getRandomDecimalNumber(MIN_LAT, MAX_LAT, 5);
+  const lngCoordinate = getRandomDecimalNumber(MIN_LNG, MAX_LNG, 5);
+
+  return {
+    author: {
+      avatar: `img/avatars/user0${getRandomNumber(1, 8)}.png`,
+    },
+
+    offer: {
+      title: 'Любой заголовок',
+      address: `${latCoordinate}, ${lngCoordinate}`,
+      price: getRandomNumber(1000, 10500),
+      type: getRandomArrayElement(PROPERTY_TYPES),
+      rooms: getRandomNumber(1, 10),
+      guests: getRandomNumber(1, 20),
+      checkin: getRandomArrayElement(TIMES),
+      checkout: getRandomArrayElement(TIMES),
+      features: getShuffleArray(FEATURES),
+      description: 'Любое описание',
+      photos: getShuffleArray(PHOTOS),
+    },
+
+    location: {
+      lat: latCoordinate,
+      lng: lngCoordinate,
+    },
+  };
+}
+
+export { SIMILAR_AD_COUNT, createAd };
