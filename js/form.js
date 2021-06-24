@@ -1,26 +1,73 @@
 const adForm = document.querySelector('.ad-form');
 const mapForm = document.querySelector('.map__filters');
+const titleAdInput = adForm.querySelector('#title');
+const priceAdInput = adForm.querySelector('#price');
+const roomNumber = adForm.querySelector('#room_number');
+const capacity = adForm.querySelector('#capacity');
+const MIN_TITLE_LENGTH = 30;
+const MAX_TITLE_LENGTH = 100;
+const MAX_PRICE_VALUE = 1000000;
+const MAX_ROOM_NUMBER = 100;
 
-function getInactiveForm() {
-  adForm.classList.add('ad-form--disabled');
-  mapForm.classList.add('map__filters--disabled');
-  [...adForm].forEach((element) => {
-    element.disabled = true;
-  });
-  [...mapForm].forEach((element) => {
-    element.disabled = true;
-  });
+function toggleFormState(isEnabled) {
+  if (!isEnabled) {
+    adForm.classList.add('ad-form--disabled');
+    mapForm.classList.add('map__filters--disabled');
+  } else {
+    adForm.classList.remove('ad-form--disabled');
+    mapForm.classList.remove('map__filters--disabled');
+  }
+  for (const element of [...adForm]) {
+    element.disabled = !isEnabled;
+  }
+  for (const element of [...mapForm]) {
+    element.disabled = !isEnabled;
+  }
 }
 
-function getActiveForm() {
-  adForm.classList.remove('ad-form--disabled');
-  mapForm.classList.remove('map__filters--disabled');
-  [...adForm].forEach((element) => {
-    element.disabled = false;
-  });
-  [...mapForm].forEach((element) => {
-    element.disabled = false;
-  });
+toggleFormState(false);
+
+titleAdInput.addEventListener('input', () => {
+  const valueLength = titleAdInput.value.length;
+
+  if (valueLength < MIN_TITLE_LENGTH) {
+    titleAdInput.setCustomValidity(`Ещё ${MIN_TITLE_LENGTH - valueLength} симв.`);
+  } else if (valueLength > MAX_TITLE_LENGTH) {
+    titleAdInput.setCustomValidity(`Удалите лишние ${valueLength - MAX_TITLE_LENGTH} симв.`);
+  } else {
+    titleAdInput.setCustomValidity('');
+  }
+
+  titleAdInput.reportValidity();
+});
+
+priceAdInput.addEventListener('input', () => {
+  if (priceAdInput.value > MAX_PRICE_VALUE) {
+    priceAdInput.setCustomValidity(`Максимальная цена ${MAX_PRICE_VALUE} руб.`);
+  }
+  else {
+    priceAdInput.setCustomValidity('');
+  }
+
+  priceAdInput.reportValidity();
+});
+
+function onCheckNumberRooms() {
+  const roomsValue = +roomNumber.value;
+  const guestsValue = +capacity.value;
+
+  if (roomsValue < guestsValue) {
+    capacity.setCustomValidity('Выберите меньшее количество гостевых мест');
+  } else if (roomsValue !== MAX_ROOM_NUMBER && guestsValue === 0) {
+    capacity.setCustomValidity('Выберите количество гостевых мест');
+  } else if (roomsValue === MAX_ROOM_NUMBER && guestsValue !== 0) {
+    capacity.setCustomValidity('Гостевые места не предусмотрены');
+  } else {
+    capacity.setCustomValidity('');
+  }
+  capacity.reportValidity();
 }
 
-export { getInactiveForm, getActiveForm };
+capacity.addEventListener('change', onCheckNumberRooms);
+
+export { toggleFormState };
