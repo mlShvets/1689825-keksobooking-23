@@ -34,7 +34,7 @@ const MAX_LAT = 35.7;
 const MIN_LNG = 139.7;
 const MAX_LNG = 139.8;
 
-function createAd() {
+const createAd = () => {
   const latCoordinate = getRandomDecimalNumber(MIN_LAT, MAX_LAT, 5);
   const lngCoordinate = getRandomDecimalNumber(MIN_LNG, MAX_LNG, 5);
 
@@ -62,6 +62,6 @@ function createAd() {
       lng: lngCoordinate,
     },
   };
-}
+};
 
 export { SIMILAR_AD_COUNT, createAd };

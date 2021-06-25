@@ -6,10 +6,10 @@ const TYPES_IN_RUSSIAN = {
   hotel: 'Отель',
 };
 
-const pictureWidth = 45;
-const pictureWeight = 40;
+const PICTURE_WIDHT = 45;
+const PICTURE_HEIGHT = 40;
 
-function createCard(ad) {
+const createCard = (ad) => {
   const similarAdTemplate = document.querySelector('#card').content.querySelector('.popup');
   const adElement = similarAdTemplate.cloneNode(true);
   adElement.querySelector('.popup__title').textContent = ad.offer.title;
@@ -45,8 +45,8 @@ function createCard(ad) {
       const picture = document.createElement('img');
       picture.classList.add('popup__photo');
       picture.src = photo;
-      picture.width = pictureWidth;
-      picture.height = pictureWeight;
+      picture.width = PICTURE_WIDHT;
+      picture.height = PICTURE_HEIGHT;
       picture.alt = 'Фотография жилья';
       photoAd.appendChild(picture);
     });
@@ -57,6 +57,6 @@ function createCard(ad) {
   adElement.querySelector('.popup__avatar').src = ad.author.avatar;
 
   return adElement;
-}
+};
 
 export { createCard };
