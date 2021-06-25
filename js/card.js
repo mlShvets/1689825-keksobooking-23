@@ -1,4 +1,4 @@
-const TYPES_IN_RUSSIAN = {
+const typeInRussian = {
   flat: 'Квартира',
   bungalow: 'Бунгало',
   house: 'Дом',
@@ -6,16 +6,16 @@ const TYPES_IN_RUSSIAN = {
   hotel: 'Отель',
 };
 
-const pictureWidth = 45;
-const pictureWeight = 40;
+const PICTURE_WIDHT = 45;
+const PICTURE_HEIGHT = 40;
 
-function createCard(ad) {
+const createCard = (ad) => {
   const similarAdTemplate = document.querySelector('#card').content.querySelector('.popup');
   const adElement = similarAdTemplate.cloneNode(true);
   adElement.querySelector('.popup__title').textContent = ad.offer.title;
   adElement.querySelector('.popup__text--address').textContent = ad.offer.address;
   adElement.querySelector('.popup__text--price').textContent = `${ad.offer.price} ₽/ночь`;
-  adElement.querySelector('.popup__type').textContent = TYPES_IN_RUSSIAN[ad.offer.type];
+  adElement.querySelector('.popup__type').textContent = typeInRussian[ad.offer.type];
   adElement.querySelector('.popup__text--capacity').textContent = `${ad.offer.rooms} комнаты для ${ad.offer.guests} гостей`;
   adElement.querySelector('.popup__text--time').textContent = `Заезд после ${ad.offer.checkin}, выезд до ${ad.offer.checkout}`;
 
@@ -45,8 +45,8 @@ function createCard(ad) {
       const picture = document.createElement('img');
       picture.classList.add('popup__photo');
       picture.src = photo;
-      picture.width = pictureWidth;
-      picture.height = pictureWeight;
+      picture.width = PICTURE_WIDHT;
+      picture.height = PICTURE_HEIGHT;
       picture.alt = 'Фотография жилья';
       photoAd.appendChild(picture);
     });
@@ -57,6 +57,6 @@ function createCard(ad) {
   adElement.querySelector('.popup__avatar').src = ad.author.avatar;
 
   return adElement;
-}
+};
 
 export { createCard };
