@@ -4,7 +4,7 @@ const MAX_PRICE_VALUE = 1000000;
 const MAX_ROOM_NUMBER = 100;
 const STATUS_ENABLE = true;
 const STATUS_DISABLE = false;
-const propertyPrice = {
+const PROPERTY_PRICE = {
   bungalow: 0,
   flat: 1000,
   hotel: 3000,
@@ -84,8 +84,8 @@ capacity.addEventListener('change', () => {
 });
 
 propertyTypes.addEventListener('change', () => {
-  priceAdInput.placeholder = propertyPrice[propertyTypes.value];
-  priceAdInput.min = propertyPrice[propertyTypes.value];
+  priceAdInput.placeholder = PROPERTY_PRICE[propertyTypes.value];
+  priceAdInput.min = PROPERTY_PRICE[propertyTypes.value];
 });
 
 checkInTime.addEventListener('change', () => {
