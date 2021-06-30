@@ -41,6 +41,8 @@ const toggleFormState = (isEnabled) => {
 const enableForm = () => toggleFormState(STATUS_ENABLE);
 const disableForm = () => toggleFormState(STATUS_DISABLE);
 
+disableForm();
+
 titleAdInput.addEventListener('input', () => {
   const valueLength = titleAdInput.value.length;
 
@@ -95,4 +97,4 @@ checkOutTime.addEventListener('change', () => {
   checkInTime.value = checkOutTime.value;
 });
 
-export { enableForm, disableForm };
+export { enableForm };
