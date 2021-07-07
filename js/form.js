@@ -1,3 +1,7 @@
+import { resetDataMap } from './map.js';
+import { sendData } from './api.js';
+import { showMessageSendSuccess, showMessageSendError } from './messages.js';
+
 const MIN_TITLE_LENGTH = 30;
 const MAX_TITLE_LENGTH = 100;
 const MAX_PRICE_VALUE = 1000000;
@@ -21,6 +25,7 @@ const capacity = adForm.querySelector('#capacity');
 const propertyTypes = adForm.querySelector('#type');
 const checkInTime = adForm.querySelector('#timein');
 const checkOutTime = adForm.querySelector('#timeout');
+const resetButton = document.querySelector('.ad-form__reset');
 
 const toggleFormState = (isEnabled) => {
   if (!isEnabled) {
@@ -97,4 +102,21 @@ checkOutTime.addEventListener('change', () => {
   checkInTime.value = checkOutTime.value;
 });
 
-export { enableForm };
+const clearForm = () => {
+  mapForm.reset();
+  adForm.reset();
+  resetDataMap();
+};
+resetButton.addEventListener('click', (evt) => {
+  evt.preventDefault();
+  clearForm();
+});
+
+adForm.addEventListener('submit', (evt) => {
+  evt.preventDefault();
+  const formData = new FormData(evt.target);
+
+  sendData(showMessageSendSuccess, showMessageSendError, formData);
+});
+
+export { enableForm, clearForm };
