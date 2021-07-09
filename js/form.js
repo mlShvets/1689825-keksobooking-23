@@ -116,7 +116,10 @@ adForm.addEventListener('submit', (evt) => {
   evt.preventDefault();
   const formData = new FormData(evt.target);
 
-  sendData(showMessageSendSuccess, showMessageSendError, formData);
+  sendData(
+    showMessageSendSuccess,
+    showMessageSendError,
+    formData);
 });
 
 export { enableForm, clearForm };

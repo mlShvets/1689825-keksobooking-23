@@ -1,10 +1,9 @@
 import { clearForm } from './form.js';
-import { showMessageGetError } from './messages.js';
 
 const GET_DATA_URL = 'https://23.javascript.pages.academy/keksobooking/data';
 const SEND_DATA_URL = 'https://23.javascript.pages.academy/keksobooking';
 
-const getData = (onSuccess) => {
+const getData = (onSuccess, onFail) => {
   fetch(GET_DATA_URL)
     .then((response) => {
       if (response.ok) {
@@ -16,7 +15,7 @@ const getData = (onSuccess) => {
       onSuccess(ads);
     })
     .catch((error) => {
-      showMessageGetError(`При загрузке данных произошла ошибка: "${error}"`);
+      onFail(`При загрузке данных произошла ошибка: "${error}"`);
     });
 };
 
@@ -36,8 +35,8 @@ const sendData = (onSuccess, onFail, body) => {
         throw new Error(`${response.status} - ${response.statusText}`);
       }
     })
-    .catch(() => {
-      onFail();
+    .catch((error) => {
+      onFail(error);
     });
 };
 
