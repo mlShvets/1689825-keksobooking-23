@@ -20,8 +20,8 @@ const createCard = (ad) => {
   adElement.querySelector('.popup__text--time').textContent = `Заезд после ${ad.offer.checkin}, выезд до ${ad.offer.checkout}`;
 
   const featureAd = adElement.querySelector('.popup__features');
-  if (ad.offer.features.length !== 0) {
-    featureAd.innerHTML = '';
+  featureAd.innerHTML = '';
+  if (ad.offer.features) {
     ad.offer.features.forEach((feature) => {
       const item = document.createElement('li');
       item.classList.add('popup__feature');
@@ -32,15 +32,15 @@ const createCard = (ad) => {
     featureAd.classList.add('.visually-hidden');
   }
 
-  if (ad.offer.description.length !== 0) {
+  if (ad.offer.description) {
     adElement.querySelector('.popup__description').textContent = ad.offer.description;
   } else {
     adElement.querySelector('.popup__description').classList.add('.visually-hidden');
   }
 
   const photoAd = adElement.querySelector('.popup__photos');
-  if (ad.offer.photos.length !== 0) {
-    photoAd.innerHTML = '';
+  photoAd.innerHTML = '';
+  if (ad.offer.photos) {
     ad.offer.photos.forEach((photo) => {
       const picture = document.createElement('img');
       picture.classList.add('popup__photo');

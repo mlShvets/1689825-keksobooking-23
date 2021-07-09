@@ -1,29 +1,18 @@
 import { enableForm } from './form.js';
 import { createCard } from './card.js';
+import { getData } from './api.js';
+import { showMessageGetError } from './messages.js';
 
 const CENTER_TOKYO_COORDINATES = {
   lat: 35.67500,
   lng: 139.75000,
 };
 
+const SIMILAR_AD_COUNT = 10;
+
 const addressInput = document.querySelector('#address');
 
-const map = L.map('map-canvas')
-  .on('load', () => {
-    enableForm();
-  })
-  .setView({
-    lat: CENTER_TOKYO_COORDINATES.lat,
-    lng: CENTER_TOKYO_COORDINATES.lng,
-  }, 12);
-
-L.tileLayer(
-  'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-  {
-    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-  },
-).addTo(map);
-
+const map = L.map('map-canvas');
 
 const mainIcon = L.icon(
   {
@@ -80,5 +69,44 @@ const createAdMarker = (dataAd) => {
   markerAd.addTo(markerGroup).bindPopup(createCard(dataAd));
 };
 
+const createMarkersGroup = (similarAds) => {
+  similarAds.forEach((dataAd) => {
+    createAdMarker(dataAd);
+  });
+};
 
-export { createAdMarker };
+map
+  .on('load', () => {
+    enableForm();
+    getData(
+      (ads) => {
+        createMarkersGroup(ads.slice(0, SIMILAR_AD_COUNT));
+      },
+      showMessageGetError,
+    );
+  })
+  .setView({
+    lat: CENTER_TOKYO_COORDINATES.lat,
+    lng: CENTER_TOKYO_COORDINATES.lng,
+  }, 12);
+
+L.tileLayer(
+  'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+  {
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+  },
+).addTo(map);
+
+const resetDataMap = () => {
+  map.setView(
+    CENTER_TOKYO_COORDINATES,
+    12);
+
+  mainMarker.setLatLng(
+    CENTER_TOKYO_COORDINATES,
+  );
+
+  addressInput.value = `${CENTER_TOKYO_COORDINATES.lat.toFixed(5)}, ${CENTER_TOKYO_COORDINATES.lng.toFixed(5)}`;
+};
+
+export { createAdMarker, resetDataMap, createMarkersGroup };
