@@ -2,13 +2,12 @@ import { enableForm } from './form.js';
 import { createCard } from './card.js';
 import { getData } from './api.js';
 import { showMessageGetError } from './messages.js';
+import { onFilter, addFilters, MAX_NUM_ADS } from './filters.js';
 
 const CENTER_TOKYO_COORDINATES = {
   lat: 35.67500,
   lng: 139.75000,
 };
-
-const SIMILAR_AD_COUNT = 10;
 
 const addressInput = document.querySelector('#address');
 
@@ -80,7 +79,8 @@ map
     enableForm();
     getData(
       (ads) => {
-        createMarkersGroup(ads.slice(0, SIMILAR_AD_COUNT));
+        onFilter(ads);
+        addFilters(ads);
       },
       showMessageGetError,
     );
@@ -98,6 +98,8 @@ L.tileLayer(
 ).addTo(map);
 
 const resetDataMap = () => {
+  markerGroup.clearLayers();
+
   map.setView(
     CENTER_TOKYO_COORDINATES,
     12);
@@ -107,6 +109,8 @@ const resetDataMap = () => {
   );
 
   addressInput.value = `${CENTER_TOKYO_COORDINATES.lat.toFixed(5)}, ${CENTER_TOKYO_COORDINATES.lng.toFixed(5)}`;
+
+  getData((ads) => createMarkersGroup(ads.slice(0, MAX_NUM_ADS)));
 };
 
-export { createAdMarker, resetDataMap, createMarkersGroup };
+export { resetDataMap, markerGroup, createMarkersGroup };
