@@ -1,5 +1,4 @@
-import { createMarkersGroup } from './map.js';
-import { markerGroup } from './map.js';
+import { markerGroup, createMarkersGroup } from './map.js';
 
 const MAX_NUM_ADS = 10;
 const DEFAUL_VALUE = 'any';
