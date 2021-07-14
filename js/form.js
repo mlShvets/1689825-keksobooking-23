@@ -1,6 +1,7 @@
 import { resetDataMap } from './map.js';
 import { sendData } from './api.js';
 import { showMessageSendSuccess, showMessageSendError } from './messages.js';
+import { previewAvatar, previewPhoto } from './photos.js';
 
 const MIN_TITLE_LENGTH = 30;
 const MAX_TITLE_LENGTH = 100;
@@ -106,7 +107,10 @@ const clearForm = () => {
   mapForm.reset();
   adForm.reset();
   resetDataMap();
+  previewAvatar.src = 'img/muffin-grey.svg';
+  previewPhoto.style = '';
 };
+
 resetButton.addEventListener('click', (evt) => {
   evt.preventDefault();
   clearForm();

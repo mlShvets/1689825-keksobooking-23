@@ -2,7 +2,8 @@ import { enableForm } from './form.js';
 import { createCard } from './card.js';
 import { getData } from './api.js';
 import { showMessageGetError } from './messages.js';
-import { onFilter, addFilters, MAX_NUM_ADS } from './filters.js';
+import { onFilter, MAX_NUM_ADS, onFilterChange } from './filters.js';
+import { debounce } from './util.js';
 
 const CENTER_TOKYO_COORDINATES = {
   lat: 35.67500,
@@ -80,7 +81,7 @@ map
     getData(
       (ads) => {
         onFilter(ads);
-        addFilters(ads);
+        onFilterChange(debounce(() => onFilter(ads)));
       },
       showMessageGetError,
     );
