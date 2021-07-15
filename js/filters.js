@@ -1,4 +1,3 @@
-import { debounce } from './util.js';
 import { markerGroup, createMarkersGroup } from './map.js';
 
 const MAX_NUM_ADS = 10;
@@ -20,52 +19,47 @@ const housingRooms = mapFilters.querySelector('#housing-rooms');
 const housingGuests = mapFilters.querySelector('#housing-guests');
 const housingFeatures = mapFilters.querySelectorAll('.map__checkbox');
 
-const onFilter = (ads) => {
-  const filteredAds = ads.filter((ad) => {
-    if (housingType.value !== DEFAUL_VALUE && ad.offer.type !== housingType.value) {
-      return false;
-    }
-    if (housingRooms.value !== DEFAUL_VALUE && ad.offer.rooms !== Number(housingRooms.value)) {
-      return false;
-    }
-    if (housingGuests.value !== DEFAUL_VALUE && ad.offer.guests !== Number(housingGuests.value)) {
-      return false;
-    }
-    if (housingPrice.value !== DEFAUL_VALUE) {
-      if (housingPrice.value === PRICES_VALUE.middle && (ad.offer.price < PRICES_RANGE.low || ad.offer.price > PRICES_RANGE.high)) {
-        return false;
-      }
-      if (housingPrice.value === PRICES_VALUE.low && ad.offer.price > PRICES_RANGE.low) {
-        return false;
-      }
-      if (housingPrice.value === PRICES_VALUE.high && ad.offer.price < PRICES_RANGE.high) {
-        return false;
-      }
-    }
-    const features = ad.offer.features || [];
-    for (let i = 0; i < housingFeatures.length; i++) {
-      const feature = housingFeatures[i];
-      if (feature.checked && !features.includes(feature.value)) {
-        return false;
-      }
-    }
+const typeFilter = (ad) =>
+  housingType.value === DEFAUL_VALUE || ad.offer.type === housingType.value;
+
+const roomsFilter = (ad) =>
+  housingRooms.value === DEFAUL_VALUE || ad.offer.rooms === Number(housingRooms.value);
+
+const guestsFilter = (ad) =>
+  housingGuests.value === DEFAUL_VALUE || ad.offer.guests === Number(housingGuests.value);
+
+const priceFilter = (ad) =>
+  (housingPrice.value === PRICES_VALUE.middle && PRICES_RANGE.low <= ad.offer.price && ad.offer.price <= PRICES_RANGE.high) ||
+  (housingPrice.value === PRICES_VALUE.low && ad.offer.price < PRICES_RANGE.low) ||
+  (housingPrice.value === PRICES_VALUE.high && ad.offer.price > PRICES_RANGE.high) ||
+  (housingPrice.value === DEFAUL_VALUE);
+
+const featuresfilter = (ad) => Array.from(housingFeatures).every((checkbox) => {
+  if (!checkbox.checked) {
     return true;
-  });
+  }
+  if (!ad.offer.features) {
+    return false;
+  }
+  return ad.offer.features.includes(checkbox.value);
+});
+
+const onFilter = (ads) => {
+  const filteredAds = ads.filter((ad) => (
+    typeFilter(ad) &&
+    priceFilter(ad) &&
+    roomsFilter(ad) &&
+    guestsFilter(ad) &&
+    featuresfilter(ad)
+  ));
+  markerGroup.clearLayers();
   createMarkersGroup(filteredAds.slice(0, MAX_NUM_ADS));
 };
 
-const addFilters = (ads) => {
-  const debounced = debounce(() => {
-    markerGroup.clearLayers();
-    onFilter(ads);
-  });
-  housingType.addEventListener('change', debounced);
-  housingPrice.addEventListener('change', debounced);
-  housingRooms.addEventListener('change', debounced);
-  housingGuests.addEventListener('change', debounced);
-  housingFeatures.forEach((feature) => {
-    feature.addEventListener('change', debounced);
+const onFilterChange = (cb) => {
+  mapFilters.addEventListener('change', () => {
+    cb();
   });
 };
 
-export { onFilter, addFilters, MAX_NUM_ADS };
+export { onFilter, MAX_NUM_ADS, onFilterChange };
