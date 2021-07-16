@@ -61,7 +61,7 @@ const createAdMarker = (dataAd) => {
   const iconAd = L.icon({
     iconUrl: 'img/pin.svg',
     iconSize: AD_MARKER.ICON_SIZE,
-    iconAnchor: AD_MARKER.ICON_SIZE,
+    iconAnchor: AD_MARKER.ICON_ANCHOR,
   });
 
   const markerAd = L.marker(
