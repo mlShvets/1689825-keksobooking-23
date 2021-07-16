@@ -3,13 +3,13 @@ import { markerGroup, createMarkersGroup } from './map.js';
 const MAX_NUM_ADS = 10;
 const DEFAUL_VALUE = 'any';
 const PRICES_VALUE = {
-  low: 'low',
-  middle: 'middle',
-  high: 'high',
+  LOW: 'low',
+  MIDDLE: 'middle',
+  HIGH: 'high',
 };
 const PRICES_RANGE = {
-  low: 10000,
-  high: 50000,
+  LOW: 10000,
+  HIGH: 50000,
 };
 
 const mapFilters = document.querySelector('.map__filters');
@@ -19,22 +19,22 @@ const housingRooms = mapFilters.querySelector('#housing-rooms');
 const housingGuests = mapFilters.querySelector('#housing-guests');
 const housingFeatures = mapFilters.querySelectorAll('.map__checkbox');
 
-const typeFilter = (ad) =>
+const filteringTypes = (ad) =>
   housingType.value === DEFAUL_VALUE || ad.offer.type === housingType.value;
 
-const roomsFilter = (ad) =>
+const filteringRooms = (ad) =>
   housingRooms.value === DEFAUL_VALUE || ad.offer.rooms === Number(housingRooms.value);
 
-const guestsFilter = (ad) =>
+const filteringGuests = (ad) =>
   housingGuests.value === DEFAUL_VALUE || ad.offer.guests === Number(housingGuests.value);
 
-const priceFilter = (ad) =>
-  (housingPrice.value === PRICES_VALUE.middle && PRICES_RANGE.low <= ad.offer.price && ad.offer.price <= PRICES_RANGE.high) ||
-  (housingPrice.value === PRICES_VALUE.low && ad.offer.price < PRICES_RANGE.low) ||
-  (housingPrice.value === PRICES_VALUE.high && ad.offer.price > PRICES_RANGE.high) ||
+const filteringPrices = (ad) =>
+  (housingPrice.value === PRICES_VALUE.MIDDLE && PRICES_RANGE.LOW <= ad.offer.price && ad.offer.price <= PRICES_RANGE.HIGH) ||
+  (housingPrice.value === PRICES_VALUE.LOW && ad.offer.price < PRICES_RANGE.LOW) ||
+  (housingPrice.value === PRICES_VALUE.HIGH && ad.offer.price > PRICES_RANGE.HIGH) ||
   (housingPrice.value === DEFAUL_VALUE);
 
-const featuresfilter = (ad) => Array.from(housingFeatures).every((checkbox) => {
+const filteringFeatures = (ad) => Array.from(housingFeatures).every((checkbox) => {
   if (!checkbox.checked) {
     return true;
   }
@@ -46,11 +46,11 @@ const featuresfilter = (ad) => Array.from(housingFeatures).every((checkbox) => {
 
 const onFilter = (ads) => {
   const filteredAds = ads.filter((ad) => (
-    typeFilter(ad) &&
-    priceFilter(ad) &&
-    roomsFilter(ad) &&
-    guestsFilter(ad) &&
-    featuresfilter(ad)
+    filteringTypes(ad) &&
+    filteringPrices(ad) &&
+    filteringRooms(ad) &&
+    filteringGuests(ad) &&
+    filteringFeatures(ad)
   ));
   markerGroup.clearLayers();
   createMarkersGroup(filteredAds.slice(0, MAX_NUM_ADS));

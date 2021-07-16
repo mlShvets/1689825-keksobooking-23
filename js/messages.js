@@ -36,6 +36,7 @@ const showMessageSendError = (error) => {
   if (error) {
     errorMessageText.innerHTML += `<br>"${error}"`;
   }
+
   document.addEventListener('keydown', onDeleteMessage);
   document.addEventListener('click', onDeleteMessage);
   errorButton.addEventListener('click', onDeleteMessage);
