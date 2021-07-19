@@ -7,8 +7,10 @@ const MIN_TITLE_LENGTH = 30;
 const MAX_TITLE_LENGTH = 100;
 const MAX_PRICE_VALUE = 1000000;
 const MAX_ROOM_NUMBER = 100;
+const MIN_GUESTS = 0;
 const STATUS_ENABLE = true;
 const STATUS_DISABLE = false;
+const previewAvatarDefault = 'img/muffin-grey.svg';
 const PROPERTY_PRICE = {
   bungalow: 0,
   flat: 1000,
@@ -63,7 +65,16 @@ titleAdInput.addEventListener('input', () => {
   titleAdInput.reportValidity();
 });
 
+const getPlaceholderValue = () => {
+  priceAdInput.placeholder = PROPERTY_PRICE[propertyTypes.value];
+};
+
+const getMinPrice = () => {
+  priceAdInput.min = PROPERTY_PRICE[propertyTypes.value];
+};
+
 priceAdInput.addEventListener('input', () => {
+  getMinPrice();
   if (priceAdInput.value > MAX_PRICE_VALUE) {
     priceAdInput.setCustomValidity(`Максимальная цена ${MAX_PRICE_VALUE} руб.`);
   }
@@ -74,26 +85,33 @@ priceAdInput.addEventListener('input', () => {
   priceAdInput.reportValidity();
 });
 
-capacity.addEventListener('change', () => {
+const roomCapacityHandler = () => {
 
   const roomsValue = +roomNumber.value;
   const guestsValue = +capacity.value;
 
   if (roomsValue < guestsValue) {
     capacity.setCustomValidity('Выберите меньшее количество гостевых мест');
-  } else if (roomsValue !== MAX_ROOM_NUMBER && guestsValue === 0) {
+  } else if (roomsValue !== MAX_ROOM_NUMBER && guestsValue === MIN_GUESTS) {
     capacity.setCustomValidity('Выберите количество гостевых мест');
-  } else if (roomsValue === MAX_ROOM_NUMBER && guestsValue !== 0) {
+  } else if (roomsValue === MAX_ROOM_NUMBER && guestsValue !== MIN_GUESTS) {
     capacity.setCustomValidity('Гостевые места не предусмотрены');
   } else {
     capacity.setCustomValidity('');
   }
   capacity.reportValidity();
-});
+};
+
+roomNumber.addEventListener('change', roomCapacityHandler);
+capacity.addEventListener('change', roomCapacityHandler);
+
+const getPriceValue = () => {
+  getPlaceholderValue();
+  getMinPrice();
+};
 
 propertyTypes.addEventListener('change', () => {
-  priceAdInput.placeholder = PROPERTY_PRICE[propertyTypes.value];
-  priceAdInput.min = PROPERTY_PRICE[propertyTypes.value];
+  getPriceValue();
 });
 
 checkInTime.addEventListener('change', () => {
@@ -107,7 +125,8 @@ const clearForm = () => {
   mapForm.reset();
   adForm.reset();
   resetDataMap();
-  previewAvatar.src = 'img/muffin-grey.svg';
+  getPlaceholderValue();
+  previewAvatar.src = previewAvatarDefault;
   previewPhoto.style = '';
 };
 

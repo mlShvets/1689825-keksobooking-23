@@ -6,9 +6,6 @@ const TYPES_IN_RUSSIAN = {
   hotel: 'Отель',
 };
 
-const PICTURE_WIDHT = 45;
-const PICTURE_HEIGHT = 40;
-
 const createCard = (ad) => {
   const similarAdTemplate = document.querySelector('#card').content.querySelector('.popup');
   const adElement = similarAdTemplate.cloneNode(true);
@@ -23,35 +20,27 @@ const createCard = (ad) => {
   featureAd.innerHTML = '';
   if (ad.offer.features) {
     ad.offer.features.forEach((feature) => {
-      const item = document.createElement('li');
-      item.classList.add('popup__feature');
-      item.classList.add(`popup__feature--${feature}`);
-      featureAd.appendChild(item);
+      featureAd.insertAdjacentHTML('beforeend', `<li class="popup__feature popup__feature--${feature}"></li>`);
     });
   } else {
-    featureAd.classList.add('.visually-hidden');
+    featureAd.classList.add('visually-hidden');
   }
 
+  const descriptionAd = adElement.querySelector('.popup__description');
   if (ad.offer.description) {
-    adElement.querySelector('.popup__description').textContent = ad.offer.description;
+    descriptionAd.textContent = ad.offer.description;
   } else {
-    adElement.querySelector('.popup__description').classList.add('.visually-hidden');
+    descriptionAd.classList.add('visually-hidden');
   }
 
   const photoAd = adElement.querySelector('.popup__photos');
   photoAd.innerHTML = '';
   if (ad.offer.photos) {
     ad.offer.photos.forEach((photo) => {
-      const picture = document.createElement('img');
-      picture.classList.add('popup__photo');
-      picture.src = photo;
-      picture.width = PICTURE_WIDHT;
-      picture.height = PICTURE_HEIGHT;
-      picture.alt = 'Фотография жилья';
-      photoAd.appendChild(picture);
+      photoAd.insertAdjacentHTML('beforeend', `<img src="${photo}" class="popup__photo" width="45" height="40" alt="Фотография жилья">`);
     });
   } else {
-    photoAd.classList.add('.visually-hidden');
+    photoAd.classList.add('visually-hidden');
   }
 
   adElement.querySelector('.popup__avatar').src = ad.author.avatar;
