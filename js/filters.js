@@ -1,6 +1,3 @@
-import { markerGroup, createMarkersGroup } from './map.js';
-
-const MAX_NUM_ADS = 10;
 const DEFAUL_VALUE = 'any';
 const PRICES_VALUE = {
   LOW: 'low',
@@ -19,22 +16,22 @@ const housingRooms = mapFilters.querySelector('#housing-rooms');
 const housingGuests = mapFilters.querySelector('#housing-guests');
 const housingFeatures = mapFilters.querySelectorAll('.map__checkbox');
 
-const filteringTypes = (ad) =>
+const filterTypes = (ad) =>
   housingType.value === DEFAUL_VALUE || ad.offer.type === housingType.value;
 
-const filteringRooms = (ad) =>
+const filterRooms = (ad) =>
   housingRooms.value === DEFAUL_VALUE || ad.offer.rooms === Number(housingRooms.value);
 
-const filteringGuests = (ad) =>
+const filterGuests = (ad) =>
   housingGuests.value === DEFAUL_VALUE || ad.offer.guests === Number(housingGuests.value);
 
-const filteringPrices = (ad) =>
+const filterPrices = (ad) =>
   (housingPrice.value === PRICES_VALUE.MIDDLE && PRICES_RANGE.LOW <= ad.offer.price && ad.offer.price <= PRICES_RANGE.HIGH) ||
   (housingPrice.value === PRICES_VALUE.LOW && ad.offer.price < PRICES_RANGE.LOW) ||
   (housingPrice.value === PRICES_VALUE.HIGH && ad.offer.price > PRICES_RANGE.HIGH) ||
   (housingPrice.value === DEFAUL_VALUE);
 
-const filteringFeatures = (ad) => Array.from(housingFeatures).every((checkbox) => {
+const filterFeatures = (ad) => Array.from(housingFeatures).every((checkbox) => {
   if (!checkbox.checked) {
     return true;
   }
@@ -44,22 +41,18 @@ const filteringFeatures = (ad) => Array.from(housingFeatures).every((checkbox) =
   return ad.offer.features.includes(checkbox.value);
 });
 
-const onFilter = (ads) => {
-  const filteredAds = ads.filter((ad) => (
-    filteringTypes(ad) &&
-    filteringPrices(ad) &&
-    filteringRooms(ad) &&
-    filteringGuests(ad) &&
-    filteringFeatures(ad)
-  ));
-  markerGroup.clearLayers();
-  createMarkersGroup(filteredAds.slice(0, MAX_NUM_ADS));
-};
+const filterAds = (ads) => ads.filter((ad) =>
+  filterTypes(ad) &&
+  filterPrices(ad) &&
+  filterRooms(ad) &&
+  filterGuests(ad) &&
+  filterFeatures(ad),
+);
 
-const onFilterChange = (cb) => {
+const setFilterChange = (cb) => {
   mapFilters.addEventListener('change', () => {
     cb();
   });
 };
 
-export { onFilter, MAX_NUM_ADS, onFilterChange };
+export { filterAds, setFilterChange };

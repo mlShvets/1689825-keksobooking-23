@@ -1,10 +1,11 @@
 import { isEscEvent } from './util.js';
 const SHOW_TIME = 5000;
+const MOUSE_CLICK = 'click';
 
 const onDeleteMessage = (evt) => {
   const message = document.querySelector('.displayMessage');
   if (message) {
-    if (isEscEvent(evt) || evt.type === 'click') {
+    if (isEscEvent(evt) || evt.type === MOUSE_CLICK) {
       evt.preventDefault();
       message.remove();
       document.removeEventListener('keydown', onDeleteMessage);

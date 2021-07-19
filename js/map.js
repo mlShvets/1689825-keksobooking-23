@@ -2,9 +2,10 @@ import { enableForm } from './form.js';
 import { createCard } from './card.js';
 import { getData } from './api.js';
 import { showMessageGetError } from './messages.js';
-import { onFilter, MAX_NUM_ADS, onFilterChange } from './filters.js';
+import { filterAds, setFilterChange } from './filters.js';
 import { debounce } from './util.js';
 
+const MAX_NUM_ADS = 10;
 const DECIMAL_PLACES = 5;
 const MAP_ZOOM = 12;
 const TIMEOUT_DELAY = 500;
@@ -12,44 +13,57 @@ const CENTER_TOKYO_COORDINATES = {
   lat: 35.67500,
   lng: 139.75000,
 };
+const ICON_URL = {
+  MAIN_ICON: 'img/main-pin.svg',
+  AD_ICON: 'img/pin.svg',
+};
 const MAIN_MARKER = {
-  ICON_SIZE: [52, 52],
-  ICON_ANCHOR: [26, 52],
+  ICON_SIZES: [52, 52],
+  ICON_ANCHOR_SIZES: [26, 52],
 };
 const AD_MARKER = {
-  ICON_SIZE: [40, 40],
-  ICON_ANCHOR: [20, 40],
+  ICON_SIZES: [40, 40],
+  ICON_ANCHOR_SIZES: [20, 40],
 };
 
 const addressInput = document.querySelector('#address');
 
 const map = L.map('map-canvas');
 
-const mainIcon = L.icon(
+const makeIcon = (url, size, anchor) => L.icon({
+  iconUrl: url,
+  iconSize: size,
+  iconAnchor: anchor,
+});
+
+const makeMarker = (lat, lng, boolean, icon) => L.marker(
   {
-    iconUrl: 'img/main-pin.svg',
-    iconSize: MAIN_MARKER.ICON_SIZE,
-    iconAnchor: MAIN_MARKER.ICON_ANCHOR,
+    lat: lat,
+    lng: lng,
+  },
+  {
+    draggable: boolean,
+    icon: icon,
   },
 );
 
-const mainMarker = L.marker(
-  {
-    lat: CENTER_TOKYO_COORDINATES.lat,
-    lng: CENTER_TOKYO_COORDINATES.lng,
-  },
-  {
-    draggable: true,
-    icon: mainIcon,
-  },
+const mainMarker = makeMarker(
+  CENTER_TOKYO_COORDINATES.lat,
+  CENTER_TOKYO_COORDINATES.lng,
+  true,
+  makeIcon(ICON_URL.MAIN_ICON, MAIN_MARKER.ICON_SIZES, MAIN_MARKER.ICON_ANCHOR_SIZES),
 );
 
 mainMarker.addTo(map);
 
-addressInput.value = `${mainMarker._latlng.lat.toFixed(DECIMAL_PLACES)}, ${mainMarker._latlng.lng.toFixed(DECIMAL_PLACES)}`;
+const setAddress = ({ lat, lng }) => {
+  addressInput.value = `${lat.toFixed(DECIMAL_PLACES)}, ${lng.toFixed(DECIMAL_PLACES)}`;
+};
+
+setAddress(CENTER_TOKYO_COORDINATES);
 
 mainMarker.on('moveend', (evt) => {
-  addressInput.value = `${evt.target.getLatLng().lat.toFixed(DECIMAL_PLACES)}, ${evt.target.getLatLng().lng.toFixed(DECIMAL_PLACES)}`;
+  setAddress(evt.target.getLatLng());
 });
 
 const markerGroup = L.layerGroup().addTo(map);
@@ -58,20 +72,11 @@ const createAdMarker = (dataAd) => {
 
   const { location } = dataAd;
 
-  const iconAd = L.icon({
-    iconUrl: 'img/pin.svg',
-    iconSize: AD_MARKER.ICON_SIZE,
-    iconAnchor: AD_MARKER.ICON_ANCHOR,
-  });
-
-  const markerAd = L.marker(
-    {
-      lat: location.lat,
-      lng: location.lng,
-    },
-    {
-      icon: iconAd,
-    },
+  const markerAd = makeMarker(
+    location.lat,
+    location.lng,
+    false,
+    makeIcon(ICON_URL.AD_ICON, AD_MARKER.ICON_SIZES, AD_MARKER.ICON_ANCHOR_SIZES),
     {
       keepInView: true,
     },
@@ -81,7 +86,8 @@ const createAdMarker = (dataAd) => {
 };
 
 const createMarkersGroup = (similarAds) => {
-  similarAds.forEach((dataAd) => {
+  markerGroup.clearLayers();
+  similarAds.slice(0, MAX_NUM_ADS).forEach((dataAd) => {
     createAdMarker(dataAd);
   });
 };
@@ -91,8 +97,9 @@ map
     enableForm();
     getData(
       (ads) => {
-        onFilter(ads);
-        onFilterChange(debounce(() => onFilter(ads), TIMEOUT_DELAY));
+        createMarkersGroup(ads);
+        setFilterChange(debounce(() => createMarkersGroup(filterAds(ads)),
+          TIMEOUT_DELAY));
       },
       showMessageGetError,
     );
@@ -120,7 +127,7 @@ const resetDataMap = () => {
     CENTER_TOKYO_COORDINATES,
   );
 
-  addressInput.value = `${CENTER_TOKYO_COORDINATES.lat.toFixed(DECIMAL_PLACES)}, ${CENTER_TOKYO_COORDINATES.lng.toFixed(DECIMAL_PLACES)}`;
+  setAddress(CENTER_TOKYO_COORDINATES);
 
   getData((ads) => createMarkersGroup(ads.slice(0, MAX_NUM_ADS)));
 };
