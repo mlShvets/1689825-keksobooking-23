@@ -2,7 +2,7 @@ import { enableForm } from './form.js';
 import { createCard } from './card.js';
 import { getData } from './api.js';
 import { showMessageGetError } from './messages.js';
-import { filterAds, setFilterChange } from './filters.js';
+import { getFiltered, setFilterChange } from './filters.js';
 import { debounce } from './util.js';
 
 const MAX_NUM_ADS = 10;
@@ -98,7 +98,7 @@ map
     getData(
       (ads) => {
         createMarkersGroup(ads);
-        setFilterChange(debounce(() => createMarkersGroup(filterAds(ads)),
+        setFilterChange(debounce(() => createMarkersGroup(getFiltered(ads)),
           TIMEOUT_DELAY));
       },
       showMessageGetError,
@@ -132,4 +132,4 @@ const resetDataMap = () => {
   getData((ads) => createMarkersGroup(ads.slice(0, MAX_NUM_ADS)));
 };
 
-export { resetDataMap, markerGroup, createMarkersGroup };
+export { resetDataMap, markerGroup, createMarkersGroup, MAX_NUM_ADS };

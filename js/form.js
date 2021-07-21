@@ -10,7 +10,7 @@ const MAX_ROOM_NUMBER = 100;
 const MIN_GUESTS = 0;
 const STATUS_ENABLE = true;
 const STATUS_DISABLE = false;
-const previewAvatarDefault = 'img/muffin-grey.svg';
+const PREVIEW_AVATAR_DEFAULT = 'img/muffin-grey.svg';
 const PROPERTY_PRICE = {
   bungalow: 0,
   flat: 1000,
@@ -126,7 +126,7 @@ const clearForm = () => {
   adForm.reset();
   resetDataMap();
   getPlaceholderValue();
-  previewAvatar.src = previewAvatarDefault;
+  previewAvatar.src = PREVIEW_AVATAR_DEFAULT;
   previewPhoto.style = '';
 };
 
