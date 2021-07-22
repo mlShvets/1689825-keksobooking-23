@@ -1,3 +1,5 @@
+import { MAX_NUM_ADS } from './map.js';
+
 const DEFAUL_VALUE = 'any';
 const PRICES_VALUE = {
   LOW: 'low',
@@ -41,13 +43,28 @@ const filterFeatures = (ad) => Array.from(housingFeatures).every((checkbox) => {
   return ad.offer.features.includes(checkbox.value);
 });
 
-const filterAds = (ads) => ads.filter((ad) =>
+const filterAd = (ad) =>
   filterTypes(ad) &&
   filterPrices(ad) &&
   filterRooms(ad) &&
   filterGuests(ad) &&
-  filterFeatures(ad),
-);
+  filterFeatures(ad);
+
+const getFiltered = (ads) => {
+  const filtered = [];
+  for (let i = 0; i < ads.length; i++) {
+    const ad = ads[i];
+
+    const isFiltered = filterAd(ad);
+    if (isFiltered) {
+      filtered.push(ad);
+      if (filtered.length === MAX_NUM_ADS) {
+        break;
+      }
+    }
+  }
+  return filtered;
+};
 
 const setFilterChange = (cb) => {
   mapFilters.addEventListener('change', () => {
@@ -55,4 +72,4 @@ const setFilterChange = (cb) => {
   });
 };
 
-export { filterAds, setFilterChange };
+export { setFilterChange, getFiltered };
